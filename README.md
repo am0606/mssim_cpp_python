@@ -47,7 +47,7 @@ If sizes parameters are not equal the error occurs.
 
 SWIG package is required with additional interface file `numpy.i` supplied with `numpy` package to convert `numpy` arrays to `C/C++` array. `output` subdir should be created to run `C/C++` program. `__DEBUG_OUTPUT` should be defined (in `DEFINES` section of the `Makefile`) to print intermediate results and can be used for debugging.
 
-To build Python module set `Python` path in `PYPATH` variable and `-I...` section of `build_python` file. Then run script `build_python` or run command `make pymodule`. 
+To build Python module set `Python` path in `PYPATH` variable in `Makefile` and `-I...` section of `build_python` file. Then run script `build_python` or run command `make pymodule`. 
 
 ## Results
 `C/C++` tests:
