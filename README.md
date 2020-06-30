@@ -36,10 +36,12 @@ Test 1 - compare two 7x9 matrices.
 
 Test 2 - compare large first matrix with its noised variant. 
 
+Test 3 - compare two 14x9 matrices with 3 zero submatrices.
+
 For `C/C++` programThe return value is zero if everything is OK and 1
 if there are the following errors:
 1. Wrong number of input parameters (should one parameter).
-2. Wrong parameter value(should be `test1` or `test2`).
+2. Wrong parameter value(should be `test1` or `test2` or `test3`).
 3. The file `output_test_rad.h5.0.dat` cannot be found for `test2`.
 4. MSSIM function takes two input arrays of the same sizes.
 If sizes parameters are not equal the error occurs.
@@ -52,25 +54,30 @@ To build Python module set `Python` path in `PYPATH` variable in `Makefile` and/
 ## Results
 `C/C++` tests:
 
-$ ./mssim test1
-MSSIM = 0.999556194103456863 \
-Elapsed time: 8.106231689453125e-06 \
-$ ./mssim test2
-MSSIM = 0.999996954461945031 \
-Elapsed time: 0.0560860633850097656
+$ ./mssim test1 \
+MSSIM = 0.999556194103456641 \
+Elapsed time: 1.40666961669921875e-05 \
+$ ./mssim test2 \
+MSSIM = 0.999996954461945364 \
+Elapsed time: 0.204175949096679688 \
+$ ./mssim test3 \
+MSSIM = 0.999658338206103614 \
+Elapsed time: 5.5789947509765625e-05
 
 `Python` tests:
 
 $ python test_mssim.py -t test1 \
-my_ssim_val_nz = 0.999556194103457\
-my_ssim_nz time:  8.106231689453125e-06 [sec]\
+my_ssim_val_nz = 0.999556194103457
+my_ssim_nz time:  1.5497207641601562e-05 [sec]
 $ python test_mssim.py -t test2\
-alb:\
-224 channels x 1120 pixels\
+alb: \
+224 channels x 1120 pixels \
 my_ssim_val_nz = 0.999996954461945 \
-my_ssim_nz time:  0.20958590507507324 [sec]
+my_ssim_nz time:  0.20418858528137207 [sec] \
+$ python test_mssim.py -t test3 \
+my_ssim_val_nz = 0.999658338206104 \
+my_ssim_nz time:  2.6702880859375e-05 [sec]
 
-It can be seen that for small matrices 7x9 the timings are almost the same but there is some overhead in case of using `Python` interface for larger 224 x 1120 matrices.
 ## References
 
 1. Wang, Zhou & Bovik, Alan & Sheikh, Hamid & Simoncelli, Eero. (2004). Image Quality Assessment: From Error Visibility to Structural Similarity. Image Processing, IEEE Transactions on. 13. 600 - 612. 10.1109/TIP.2003.819861.
