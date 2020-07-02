@@ -177,6 +177,53 @@ void test3(double*& m1, double*& m2, int& nrows, int& ncols)
 			m2[i*ncols+j] = m2_arr[i][j];
 }
 
+void test4(double*& m1, double*& m2, int& nrows, int& ncols)
+{
+	//multidimensional C array
+	double m1_arr[14][9] = {{1.,	0.,	3.,	1.,	0.,	3.,	1.,	0.,	3.},
+						   {4.,	5.,	6.,	4.,	5.,	6.,	4.,	5.,	6.},
+						   {0.,	7.,	9.,	0.,	7.,	9.,	0.,	7.,	9.},
+						   {1.,	0.,	3.,	1.,	0.,	3.,	1.,	0.,	3.},
+						   {4.,	5.,	6.,	4.,	5.,	6.,	4.,	5.,	6.},
+						   {0.,	7.,	9.,	0.,	7.,	9.,	0.1, 7.,9.},
+						   {1.,	0.,	3.,	1.,	0.,	3.,	1.,	0.,	3.},
+						   {0., 0., 0., 0., 0., 0., 0., 0., 0.},
+						   {0., 0., 0., 0., 0., 0., 0., 1., 0.},
+						   {0., 0., 0., 0., 0., 0., 0., 0., 0.},
+						   {0., 0., 0., 0., 0., 0., 0., 1., 0.},
+						   {0., 0., 0., 0., 0., 0., 0., 0., 0.},
+						   {0., 0., 0., 0., 0., 0., 0., 0., 0.},
+						   {0., 0., 0., 0., 0., 0., 0., 0., 0.}};
+	nrows = 14;
+	ncols = 9;
+	//It is important to note that in the C type system, a multidimensional array a[][] is NOT equivalent 
+	//to a single pointer *a or a double pointer such as **a. Instead, a pointer to an array is used 
+	//where the actual value of the pointer is the starting memory location of the array. 
+	m1 = new double[nrows*ncols];
+	for(int i=0;i<nrows;i++)
+		for(int j=0;j<ncols;j++)
+			m1[i*ncols+j] = m1_arr[i][j];
+	double m2_arr[14][9] = {{1.,	 0.,	3.,	    1.,	     0.,	3.,	  1.,	0.,	 3.},
+	   					   {4.,	 5.1,   6.2,    4,	     5.1,	6.2,  4.,	5.1, 6.2},
+						   {0.3, 7.,	9.,	    0.3,     7.,	9.,	  0.3,	7.,	 9.},
+						   {1.,	 0.,	3.,	    1,	     0.,	3.,   1.,	0.,	 3.},
+						   {4.,	 5.1,   6.2,	4.,	     5.1,   6.2,  4.,	5.1, 6.2},
+						   {0.3, 7.,	9,	    0.3,	 7.,	9.,	  0.3,	7.,	 9.},
+						   {1.,	 0.,	3.,	    1.,	     0.,	3.,	  1.,	0.,	 3.},
+						   {0.,  0.,    0.,     0.,      0.,    0.,   0.,   0.,  0.},
+						   {0.,  0.,    0.,     0.,      0.,    0.,   0.,   1.1, 0.},
+						   {0.,  0.,    0.,     0.,      0.,    0.,   0.,   0.,  0.},
+						   {0.,  0.,    0.,     0.,      0.,    0.,   0.,   1.1, 0.},
+						   {0.,  0.,    0.,     0.,      0.,    0.,   0.,   0.,  0.},
+						   {0.,  0.,    0.,     0.,      0.,    0.,   0.,   0.,  0.},
+						   {0.,  0.,    0.,     0.,      0.,    0.,   0.,   0.,  0.}};
+
+	m2 = new double[nrows*ncols];
+	for(int i=0;i<nrows;i++)
+		for(int j=0;j<ncols;j++)
+			m2[i*ncols+j] = m2_arr[i][j];
+}
+
 int main(int argc, char* argv[])
 {
 	setPrefix();
@@ -186,7 +233,7 @@ int main(int argc, char* argv[])
 	if (argc != 2)
 	{
 		std::ostringstream err_str;
-		err_str << "Wrong number of parameters. Parameter value 'test1' or 'test2' or 'test3' should be set!\n";
+		err_str << "Wrong number of parameters. Parameter value 'test1' or 'test2' or 'test3' or 'test4' should be set!\n";
 		(*msg_stream) << err_str.str();
 		std::cout << err_str.str();
 		return 1;
@@ -212,10 +259,12 @@ int main(int argc, char* argv[])
 	}
 	else if (strcmp(argv[1],"test3")==0)
 		test3(m1,m2,nrows,ncols);
+	else if (strcmp(argv[1],"test4")==0)
+		test4(m1,m2,nrows,ncols);
 	else
 	{
 		std::ostringstream err_str;
-		err_str << "Wrong parameter value. Only 'test1' or 'test2' or 'test3' are available!\n";
+		err_str << "Wrong parameter value. Only 'test1' or 'test2' or 'test3' or 'test4' are available!\n";
 		(*msg_stream) << err_str.str();
 		std::cout << err_str.str();
 		return 1;

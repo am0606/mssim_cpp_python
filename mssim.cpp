@@ -50,10 +50,9 @@ void print_matrix(const char* filename, double* matrix, int nrows, int ncols)
 	(*output).flush();
 }
 
-void xnz(double* m1, int ncols, double*& nz_matrix, int& num_z_matr, int n_bl_r, int n_bl_c, int p)
+void xnz(double* m1, int ncols, double*& nz_matrix, int n_bl_r, int n_bl_c, int p)
 {
 	//number of totally zero p x p submatrices
-	num_z_matr = 0;
 	for(int i=0;i<n_bl_r;i++)
 		for(int j=0;j<n_bl_c;j++)
 		{
@@ -65,7 +64,6 @@ void xnz(double* m1, int ncols, double*& nz_matrix, int& num_z_matr, int n_bl_r,
 					if (val > 0) nz_ij++;
 				}
 				nz_matrix[i*n_bl_c+j] = nz_ij;
-				if (nz_ij == 0) num_z_matr++;
 		}
 }
 
@@ -145,10 +143,11 @@ void covPre(double* m1, double* m2, int ncols, double* mus_matrix1, double* mus_
 		}
 }
 
-double ab(double* mus_matrix1, double* mus_matrix2, double* sigma2_matrix1, double* sigma2_matrix2, double* covpre_matrix, int n_bl_r, int n_bl_c, int num_z_matr, double*& ab_matrix)
+double ab(double* mus_matrix1, double* mus_matrix2, double* sigma2_matrix1, double* sigma2_matrix2, double* covpre_matrix, int n_bl_r, int n_bl_c, double*& ab_matrix)
 {
 	double my_ssim_a_sum = 0;
-	//number of blocks except zero matrices
+	//number of blocks with zero contribution (zero input matrices and zero variances)
+	int num_z_blocks = 0;
 	for(int i=0; i<n_bl_r; i++)
 		for(int j=0; j<n_bl_c; j++)
 		{
@@ -163,16 +162,27 @@ double ab(double* mus_matrix1, double* mus_matrix2, double* sigma2_matrix1, doub
 				double b_value;
 				double sigma2pre_ij_1 = sigma2_matrix1[idx];
 				double sigma2pre_ij_2 = sigma2_matrix2[idx];
-				if (sigma2pre_ij_1 == 0 && sigma2pre_ij_2 == 0) b_value = 0.;
+				if (sigma2pre_ij_1 == 0 && sigma2pre_ij_2 == 0)
+				{
+					b_value = 0.;
+					num_z_blocks++;
+				}
 				else b_value = 2*covpre_matrix[idx]/(sigma2pre_ij_1+sigma2pre_ij_2);
 				double ab_value = a_value * b_value;
 				ab_matrix[idx] = ab_value;
 				my_ssim_a_sum += ab_value;
 			}
-			else ab_matrix[idx] = 0.;
+			else 
+			{
+				ab_matrix[idx] = 0.;
+				num_z_blocks++;
+			}
 
 		}
-	int nnz = n_bl_r*n_bl_c - num_z_matr;
+	int nnz = n_bl_r*n_bl_c - num_z_blocks;
+	////DEBUG
+	// std::cout.precision(17);
+	// std::cout << "num_z_blocks = " << num_z_blocks << ", nnz = " << nnz << ", my_ssim_a_sum = " <<  my_ssim_a_sum << std::endl;
 	return my_ssim_a_sum/nnz;
 }
 
@@ -198,13 +208,11 @@ double mssim(double* m1, int nrows, int ncols, double* m2, int nrows2, int ncols
 	unsigned n_bl_c = ncols - p + 1;
 
 	double* nz_matrix = new double[n_bl_r * n_bl_c];
-	//number of totally zero p x p submatrices
-	int num_z_matr = 0;
-	xnz(m1,ncols,nz_matrix,num_z_matr, n_bl_r,n_bl_c,p);
-	//(*msg_stream) << "num_z_matr = " << num_z_matr << std::endl;
+	xnz(m1,ncols,nz_matrix,n_bl_r,n_bl_c,p);
 #ifdef __DEBUG_OUTPUT
 	print_matrix(setOut("nz_matrix.txt"), nz_matrix, n_bl_r, n_bl_c);
 #endif
+	////DEBUG
 	//print_matrix(0, nz_matrix, n_bl_r, n_bl_c);
 
 	double* mus_matrix1 = new double[n_bl_r * n_bl_c];
@@ -212,6 +220,7 @@ double mssim(double* m1, int nrows, int ncols, double* m2, int nrows2, int ncols
 #ifdef __DEBUG_OUTPUT
 	print_matrix(setOut("mus_matrix1.txt"),mus_matrix1, n_bl_r, n_bl_c);
 #endif
+	////DEBUG
 	//print_matrix(0,mus_matrix1, n_bl_r, n_bl_c);
 
 	double* mus_matrix2 = new double[n_bl_r * n_bl_c];
@@ -219,6 +228,7 @@ double mssim(double* m1, int nrows, int ncols, double* m2, int nrows2, int ncols
 #ifdef __DEBUG_OUTPUT
 	print_matrix(setOut("mus_matrix2.txt"),mus_matrix2, n_bl_r, n_bl_c);
 #endif
+	////DEBUG
 	//print_matrix(0,m2,nrows, ncols);
 	//print_matrix(0,mus_matrix2, n_bl_r, n_bl_c);
 
@@ -241,7 +251,7 @@ double mssim(double* m1, int nrows, int ncols, double* m2, int nrows2, int ncols
 #endif
 
 	double* ab_matrix = new double[n_bl_r * n_bl_c];
-	double my_ssim = ab(mus_matrix1,mus_matrix2,sigma2_pre_matrix1,sigma2_pre_matrix2,cov_pre_matrix,n_bl_r,n_bl_c,num_z_matr,ab_matrix);
+	double my_ssim = ab(mus_matrix1,mus_matrix2,sigma2_pre_matrix1,sigma2_pre_matrix2,cov_pre_matrix,n_bl_r,n_bl_c,ab_matrix);
 #ifdef __DEBUG_OUTPUT
 	print_matrix(setOut("ab_matrix.txt"), ab_matrix, n_bl_r, n_bl_c);
 #endif

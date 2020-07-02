@@ -96,17 +96,17 @@ def test3():
     return image0,image1
 
 def test4():
-    image0 = np.array([[1,	0,	3,	1,	0,	3,	1,	-1,	3],\
+    image0 = np.array([[1,	0,	3,	1,	0,	3,	1,	0,	3],\
                        [4,	5,	6,	4,	5,	6,	4,	5,	6],\
                        [0,	7,	9,	0,	7,	9,	0,	7,	9],\
                        [1,	0,	3,	1,	0,	3,	1,	0,	3],\
                        [4,	5,	6,	4,	5,	6,	4,	5,	6],\
-                       [0,	7,	9,	-1,	7,	9,	0.1,	7,	9],\
+                       [0,	7,	9,	0,	7,	9,	0.1,	7,	9],\
                        [1,	0,	3,	1,	0,	3,	1,	0,	3],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
+                       [0,	0,	0,	0,	0,	0,	0,	1,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
-                       [0,	0,	0,	0,	0,	0,	0,	0,	0],\
-                       [0,	0,	0,	0,	0,	0,	0,	0,	0],\
+                       [0,	0,	0,	0,	0,	0,	0,	1,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0]])
@@ -119,9 +119,9 @@ def test4():
                        [0.3,	7,	9,	0.3,	7,	9,	0.3,	7,	9],\
                        [1,	0,	3,	1,	0,	3,	1,	0,	3],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
+                       [0,	0,	0,	0,	0,	0,	0,	1.1,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
-                       [0,	0,	0,	0,	0,	0,	0,	0,	0],\
-                       [0,	0,	0,	0,	0,	0,	0,	0,	0],\
+                       [0,	0,	0,	0,	0,	0,	0,	1.1,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0],\
                        [0,	0,	0,	0,	0,	0,	0,	0,	0]])
@@ -131,7 +131,7 @@ def test4():
     return image0,image1
 
 ap = argparse.ArgumentParser()
-ap.add_argument("-t", "--testnm", required=True,	help="test case (test1 or test2)")
+ap.add_argument("-t", "--testnm", required=True, help="test case (test1 || test2 || test3 || test4)")
 args = vars(ap.parse_args())
 
 testname = args["testnm"]
@@ -142,7 +142,7 @@ elif testname == 'test2':
 elif testname == 'test3':
     [image0,image1] = test3()
 elif testname == 'test4':
-    [image0,image1] = test3()
+    [image0,image1] = test4()
 else:
     raise argparse.ArgumentError('testnm=(test1 || test2 || test3 || test4) expected.')
 
